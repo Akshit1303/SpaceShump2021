@@ -11,6 +11,9 @@ public class Hero : MonoBehaviour
     public float pitchMult = 30;
     public float gameRestartDelay = 2f;
 
+    public GameObject projectilePrefab;
+    public float projectileSpeed = 40;
+
     [Header("Set Dynamically")]
     [SerializeField]
     private float _shieldLevel = 1; // Remember the underscore
@@ -39,7 +42,7 @@ public class Hero : MonoBehaviour
     void Update()
     {
         // Pull in information from the Input class
-        float xAxis = Input.GetAxis("Horizontal"); 
+        float xAxis = Input.GetAxis("Horizontal");
         float yAxis = Input.GetAxis("Vertical");
 
         // Change transform.position based on the axes
@@ -50,7 +53,22 @@ public class Hero : MonoBehaviour
 
         //Rotate the ship to make it feel more dynamic
         transform.rotation = Quaternion.Euler(yAxis * pitchMult, xAxis * rollMult, 0);
+
+        // Allow the ship to fire
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            TempFire();
+        }
     }
+
+    void TempFire()
+    { 
+        GameObject projGO = Instantiate<GameObject>(projectilePrefab);
+        projGO.transform.position = transform.position;
+        Rigidbody rigidB = projGO.GetComponent<Rigidbody>();
+        rigidB.velocity = Vector3.up * projectileSpeed;
+    }
+
 
     void OnTriggerEnter(Collider other)
     {
@@ -77,7 +95,7 @@ public class Hero : MonoBehaviour
     }
 
         public float shieldLevel
-    {
+        {
         get
         {
             return (_shieldLevel); 
@@ -96,7 +114,7 @@ public class Hero : MonoBehaviour
                 Main.S.DelayedRestart(gameRestartDelay);
             }
         }
-    }
+        }
 
 }
 
